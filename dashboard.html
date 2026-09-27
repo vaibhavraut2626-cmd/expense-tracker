@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Expense Tracker Dashboard</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
+    color: #222;
+}
+
+/* Header */
+
+.header {
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    color: white;
+    padding: 25px 20px;
+    border-radius: 0 0 25px 25px;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 25px;
+}
+
+.header p {
+    margin: 8px 0 0;
+    opacity: 0.9;
+}
+
+/* Main */
+
+.container {
+    max-width: 650px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* Cards */
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: -5px;
+}
+
+.card {
+    background: white;
+    padding: 15px 8px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 3px 12px #ddd;
+}
+
+.card h3 {
+    margin: 0;
+    font-size: 13px;
+    color: #666;
+}
+
+.card p {
+    margin: 8px 0 0;
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.income {
+    color: #16a34a;
+}
+
+.expense {
+    color: #dc2626;
+}
+
+.balance {
+    color: #2563eb;
+}
+
+/* Form */
+
+.form-box {
+    background: white;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 15px;
+    box-shadow: 0 3px 12px #ddd;
+}
+
+.form-box h3 {
+    margin-top: 0;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 13px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+/* Button */
+
+button {
+    width: 100%;
+    padding: 13px;
+    margin-top: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* Transactions */
+
+.history-title {
+    margin-top: 25px;
+}
+
+.transaction {
+    background: white;
+    padding: 15px;
+    margin-top: 10px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.transaction-left {
+    text-align: left;
+}
+
+.transaction-title {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.transaction-type {
+    font-size: 12px;
+    color: #777;
+    margin-top: 5px;
+}
+
+.transaction-amount {
+    font-weight: bold;
+}
+
+.delete {
+    background: #ef4444;
+    width: auto;
+    padding: 7px 10px;
+    margin-top: 7px;
+    font-size: 12px;
+}
+
+/* Logout */
+
+.logout {
+    background: #111827;
+    margin-top: 25px;
+}
+
+/* Mobile */
+
+@media (max-width: 400px) {
+
+    .cards {
+        gap: 7px;
+    }
+
+    .card {
+        padding: 12px 5px;
+    }
+
+    .card p {
+        font-size: 15px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- Header -->
+
+<div class="header">
+
+    <h2>Expense Tracker</h2>
+
+    <p id="welcome">Welcome</p>
+
+</div>
+
+
+<div class="container">
+
+    <!-- Summary Cards -->
+
+    <div class="cards">
+
+        <div class="card">
+
+            <h3>Income</h3>
+
+            <p class="income">
+                ₹<span id="income">0</span>
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>Expense</h3>
+
+            <p class="expense">
+                ₹<span id="expense">0</span>
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>Balance</h3>
+
+            <p class="balance">
+                ₹<span id="balance">0</span>
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- Add Transaction -->
+
+    <div class="form-box">
+
+        <h3>➕ Add Transaction</h3>
+
+        <input
+            type="text"
+            id="title"
+            placeholder="Transaction title"
+        >
+
+        <input
+            type="number"
+            id="amount"
+            placeholder="Amount ₹"
+        >
+
+        <select id="type">
+
+            <option value="expense">
+                Expense
+            </option>
+
+            <option value="income">
+                Income
+            </option>
+
+        </select>
+
+        <button onclick="addTransaction()">
+            Add Transaction
+        </button>
+
+    </div>
+
+
+    <!-- History -->
+
+    <h3 class="history-title">
+        Transaction History
+    </h3>
+
+    <div id="transactionList"></div>
+
+
+    <!-- Logout -->
+
+    <button class="logout" onclick="logout()">
+        Logout
+    </button>
+
+</div>
+
+
+<script>
+
+/* User */
+
+let user =
+    JSON.parse(localStorage.getItem("expenseUser"));
+
+if (!user) {
+
+    alert("Please login first!");
+
+    window.location.href = "login.html";
+
+}
+
+
+/* Welcome */
+
+document.getElementById("welcome").innerText =
+    "Welcome, " + user.name;
+
+
+/* Transactions */
+
+let transactions =
+    JSON.parse(
+        localStorage.getItem("transactions")
+    ) || [];
+
+
+/* Add */
+
+function addTransaction() {
+
+    let title =
+        document.getElementById("title").value.trim();
+
+    let amount =
+        Number(
+            document.getElementById("amount").value
+        );
+
+    let type =
+        document.getElementById("type").value;
+
+
+    if (title === "" || amount <= 0) {
+
+        alert("Please enter valid details!");
+
+        return;
+
+    }
+
+
+    let transaction = {
+
+        id: Date.now(),
+
+        title: title,
+
+        amount: amount,
+
+        type: type
+
+    };
+
+
+    transactions.push(transaction);
+
+
+    localStorage.setItem(
+        "transactions",
+        JSON.stringify(transactions)
+    );
+
+
+    document.getElementById("title").value = "";
+
+    document.getElementById("amount").value = "";
+
+
+    displayTransactions();
+
+}
+
+
+/* Display */
+
+function displayTransactions() {
+
+    let list =
+        document.getElementById(
+            "transactionList"
+        );
+
+    list.innerHTML = "";
+
+
+    let income = 0;
+
+    let expense = 0;
+
+
+    transactions.forEach(function(item) {
+
+
+        if (item.type === "income") {
+
+            income += item.amount;
+
+        } else {
+
+            expense += item.amount;
+
+        }
+
+
+        let div =
+            document.createElement("div");
+
+
+        div.className = "transaction";
+
+
+        div.innerHTML = `
+
+            <div class="transaction-left">
+
+                <div class="transaction-title">
+                    ${item.title}
+                </div>
+
+                <div class="transaction-type">
+                    ${item.type.toUpperCase()}
+                </div>
+
+                <button
+                    class="delete"
+                    onclick="deleteTransaction(${item.id})">
+                    Delete
+                </button>
+
+            </div>
+
+            <div class="transaction-amount">
+
+                ₹${item.amount}
+
+            </div>
+
+        `;
+
+
+        list.appendChild(div);
+
+    });
+
+
+    document.getElementById("income")
+        .innerText = income;
+
+
+    document.getElementById("expense")
+        .innerText = expense;
+
+
+    document.getElementById("balance")
+        .innerText = income - expense;
+
+}
+
+
+/* Delete */
+
+function deleteTransaction(id) {
+
+    transactions =
+        transactions.filter(function(item) {
+
+            return item.id !== id;
+
+        });
+
+
+    localStorage.setItem(
+        "transactions",
+        JSON.stringify(transactions)
+    );
+
+
+    displayTransactions();
+
+}
+
+
+/* Logout */
+
+function logout() {
+
+    localStorage.removeItem("loggedIn");
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* Start */
+
+displayTransactions();
+
+</script>
+
+</body>
+
+</html>
