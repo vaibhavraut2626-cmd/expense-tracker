@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Create Account</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f4f7;
+    margin: 0;
+}
+
+.box {
+    width: 85%;
+    max-width: 400px;
+    margin: 60px auto;
+    padding: 25px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px #aaa;
+    text-align: center;
+}
+
+input {
+    width: 90%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+button {
+    width: 96%;
+    padding: 12px;
+    margin-top: 10px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+a {
+    display: block;
+    margin-top: 15px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Expense Tracker</h2>
+
+<h3>Create Account</h3>
+
+<input type="text" id="name" placeholder="Full Name">
+
+<input type="email" id="email" placeholder="Email">
+
+<input type="password" id="password" placeholder="Password">
+
+<input type="password" id="confirmPassword"
+placeholder="Confirm Password">
+
+<button id="registerBtn">Register</button>
+
+<a href="login.html">Back to Login</a>
+
+</div>
+
+<script>
+
+document.getElementById("registerBtn").addEventListener("click", function() {
+
+    let name = document.getElementById("name").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let password = document.getElementById("password").value;
+    let confirmPassword =
+        document.getElementById("confirmPassword").value;
+
+    if (name === "" || email === "" || password === "" || confirmPassword === "") {
+        alert("Please fill all fields!");
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+    }
+
+    let user = {
+        name: name,
+        email: email,
+        password: password
+    };
+
+    localStorage.setItem("expenseUser", JSON.stringify(user));
+
+    alert("Registration Successful!");
+
+    window.location.href = "login.html";
+
+});
+
+</script>
+
+</body>
+</html>
