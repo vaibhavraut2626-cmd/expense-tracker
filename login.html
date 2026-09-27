@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Expense Tracker Login</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f4f7;
+    margin: 0;
+    padding: 0;
+}
+
+.box {
+    width: 85%;
+    max-width: 400px;
+    margin: 80px auto;
+    padding: 25px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px #aaa;
+    text-align: center;
+}
+
+input {
+    width: 90%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+button {
+    width: 96%;
+    padding: 12px;
+    margin-top: 10px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+a {
+    display: block;
+    margin-top: 15px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Expense Tracker</h2>
+
+<h3>Login</h3>
+
+<input type="email" id="email" placeholder="Email">
+
+<input type="password" id="password" placeholder="Password">
+
+<button id="loginBtn">Login</button>
+
+<a href="register.html">Create New Account</a>
+
+</div>
+
+<script>
+
+document.getElementById("loginBtn").addEventListener("click", function() {
+
+    let email = document.getElementById("email").value.trim();
+    let password = document.getElementById("password").value;
+
+    if (email === "" || password === "") {
+        alert("Please enter Email and Password!");
+        return;
+    }
+
+    let userData = localStorage.getItem("expenseUser");
+
+    if (userData === null) {
+        alert("Please register first!");
+        return;
+    }
+
+    let user = JSON.parse(userData);
+
+    if (email === user.email && password === user.password) {
+
+        localStorage.setItem("loggedIn", "true");
+
+        alert("Login Successful!");
+
+        window.location.href = "dashboard.html";
+
+    } else {
+
+        alert("Wrong Email or Password!");
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
